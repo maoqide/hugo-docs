@@ -42,17 +42,17 @@ paginate = 10
     identifier = "about"
     url = "/about/"
   [[menu.main]]
-    name = "Topic"
+    name = "Topics"
     pre = "<i class='fa fa-user fa-fw'></i>"
     weight = 3
     identifier = "topic"
-    url = "/topic/"
+    url = "/topics/"
   [[menu.main]]
-    name = "Tag"
+    name = "Tags"
     pre = "<i class='fa fa-user fa-fw'></i>"
     weight = 3
     identifier = "tag"
-    url = "/tag/"
+    url = "/tags/"
   [[menu.main]]
     name = "Contact"
     pre = "<i class='fa fa-phone fa-fw'></i>"

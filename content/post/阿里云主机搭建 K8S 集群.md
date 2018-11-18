@@ -2,8 +2,8 @@
 title: "阿里云主机搭建 K8S 集群"
 date: 2018-11-14T14:31:38+08:00
 draft: true
-tags: ["k8s"]
-topics: ["cloud/k8s"]
+tags: ["cloud", "k8s"]
+topics: ["k8s"]
 ---
 
 通过阿里云ECS实例搭建K8S集群
