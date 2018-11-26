@@ -11,7 +11,7 @@ description = ""
 k8s apiserver 源码阅读笔记 
 <!--more--> 
 ## 代码结构
-	本部分用于记录 apiserver 代码整体结构及关键方法，便于到源码中查找。本文所有代码均基于 kubernetes 1.9.6。
+	本部分用于记录 apiserver 代码整体结构及关键方法，便于到源码中查找，个人阅读记录，读者可跳过。本文所有代码均基于 kubernetes 1.9.6。
 ```golang
 app.Run()
 	CreateServerChain()
@@ -734,29 +734,51 @@ func (a *APIInstaller) Install() ([]metav1.APIResource, *restful.WebService, []e
 ```
 
 
-
-
-### restStorageProviders
-```golang
-restStorageProviders := []RESTStorageProvider{
-	authenticationrest.RESTStorageProvider{Authenticator: c.GenericConfig.Authenticator},
-	authorizationrest.RESTStorageProvider{Authorizer: c.GenericConfig.Authorizer, RuleResolver: c.GenericConfig.RuleResolver},
-	autoscalingrest.RESTStorageProvider{},
-	batchrest.RESTStorageProvider{},
-	certificatesrest.RESTStorageProvider{},
-	extensionsrest.RESTStorageProvider{},
-	networkingrest.RESTStorageProvider{},
-	policyrest.RESTStorageProvider{},
-	rbacrest.RESTStorageProvider{Authorizer: c.GenericConfig.Authorizer},
-	schedulingrest.RESTStorageProvider{},
-	settingsrest.RESTStorageProvider{},
-	storagerest.RESTStorageProvider{},
-	// keep apps after extensions so legacy clients resolve the extensions versions of shared resource names.
-	// See https://github.com/kubernetes/kubernetes/issues/42392
-	appsrest.RESTStorageProvider{},
-	admissionregistrationrest.RESTStorageProvider{},
-	eventsrest.RESTStorageProvider{TTL: c.ExtraConfig.EventTTL},
-}
-```
-
 ### m.InstallAPIs
+```golang
+m.InstallAPIs(c.ExtraConfig.APIResourceConfigSource, c.GenericConfig.RESTOptionsGetter, restStorageProviders...)
+
+// InstallAPIs will install the APIs for the restStorageProviders if they are enabled.
+func (m *Master) InstallAPIs(apiResourceConfigSource serverstorage.APIResourceConfigSource, restOptionsGetter generic.RESTOptionsGetter, restStorageProviders ...RESTStorageProvider) {}
+```
+用于注册`/apis`下的 API。在调用 InstallAPIs 之前，会创建`/apis`下 Storage 的 `RESTStorageProvider`, 该 interface 的定义及创建在下面代码片段`1`贴出。    
+每个 RESTStorageProvider, 都会有一个`NewRESTStorage`方法来创建对应资源的 Storage。调用 InstallAPIs 方法时，会将 restStorageProviders 列表传入。
+InstallAPIs 会遍历传入的 restStorageProviders 列表，并调用每个 restStorageProvider 的 `NewRESTStorage`。    
+`NewRESTStorage`方法, 会新建一个 APIGroupInfo, 然后针对 enable 的 API 版本, 调用 VXXStorage 获取对应版本的 ResourcesStorageMap 并存入 apiGroupInfo.VersionedResourcesStorageMap[VXX]中。用来获取 ResourcesStorageMap 的方法，和上面 InstallLegacyAPIGroup.NewLegacyRESTStorage 方法中一样，也是 `NewREST`, 具体逻辑也基本相同，返回一个 REST 结构体提供对资源的 CRUD 等操作。    
+`NewRESTStorage`方法最终返回的 apiGroupInfo, 会被放入一个 apiGroupsInfo 列表，最后会遍历这个列表并针对每一个 apiGroupInfo 执行 `m.GenericAPIServer.InstallAPIGroup(&apiGroupsInfo[i])`, 这部分逻辑和 InstallLegacyAPIGroup 一样，通过调用 installAPIResources 将 API 注册到 GoRestfulContainer 中，详细的可以对照上面的 InstallLegacyAPIGroup 的分析参考源码。
+
+```golang
+// 代码片段 1
+// RESTStorageProvider is a factory type for REST storage.
+type RESTStorageProvider interface {
+	GroupName() string
+	NewRESTStorage(apiResourceConfigSource serverstorage.APIResourceConfigSource, restOptionsGetter generic.RESTOptionsGetter) (genericapiserver.APIGroupInfo, bool)
+}
+
+// The order here is preserved in discovery.
+	// If resources with identical names exist in more than one of these groups (e.g. "deployments.apps"" and "deployments.extensions"),
+	// the order of this list determines which group an unqualified resource name (e.g. "deployments") should prefer.
+	// This priority order is used for local discovery, but it ends up aggregated in `k8s.io/kubernetes/cmd/kube-apiserver/app/aggregator.go
+	// with specific priorities.
+	// TODO: describe the priority all the way down in the RESTStorageProviders and plumb it back through the various discovery
+	// handlers that we have.
+	restStorageProviders := []RESTStorageProvider{
+		authenticationrest.RESTStorageProvider{Authenticator: c.GenericConfig.Authenticator},
+		authorizationrest.RESTStorageProvider{Authorizer: c.GenericConfig.Authorizer, RuleResolver: c.GenericConfig.RuleResolver},
+		autoscalingrest.RESTStorageProvider{},
+		batchrest.RESTStorageProvider{},
+		certificatesrest.RESTStorageProvider{},
+		extensionsrest.RESTStorageProvider{},
+		networkingrest.RESTStorageProvider{},
+		policyrest.RESTStorageProvider{},
+		rbacrest.RESTStorageProvider{Authorizer: c.GenericConfig.Authorizer},
+		schedulingrest.RESTStorageProvider{},
+		settingsrest.RESTStorageProvider{},
+		storagerest.RESTStorageProvider{},
+		// keep apps after extensions so legacy clients resolve the extensions versions of shared resource names.
+		// See https://github.com/kubernetes/kubernetes/issues/42392
+		appsrest.RESTStorageProvider{},
+		admissionregistrationrest.RESTStorageProvider{},
+		eventsrest.RESTStorageProvider{TTL: c.ExtraConfig.EventTTL},
+	}
+```
