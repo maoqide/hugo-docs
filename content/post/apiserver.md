@@ -7,7 +7,6 @@ topics = []
 description = ""
 +++
 
-# Apiserver
 k8s apiserver 源码阅读笔记 
 <!--more--> 
 ## 代码结构

@@ -7,7 +7,6 @@ topics = ["k8s"]
 description = ""
 +++
 
-# Kubelet
 Kubelet 源码阅读笔记
 <!--more-->
  

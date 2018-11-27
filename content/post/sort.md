@@ -7,7 +7,6 @@ topics = ["algorithm", "sort"]
 description = ""
 +++
 
-# Sort
 sort function implemented in golang
 <!--more--> 
 
