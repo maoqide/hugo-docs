@@ -1,70 +1,62 @@
+# theme.toml template for a Hugo theme
+# See https://github.com/spf13/hugoThemes#themetoml for an example
+
+name = "Maoqide"
+min_version = 0.25
 baseurl = ""
 languageCode = "en-us"
-title = "maoqide"
-theme = "blackburn"
-author = "Yoshiharu Yamashita"
-copyright = "&copy; 2016. All rights reserved."
+title = "Maoqide"
 canonifyurls = true
 paginate = 10
 
-[indexes]
-  tag = "tags"
-  topic = "topics"
-
 [params]
-  # Shown in the home page
-  subtitle = "learn & record"
-  brand = "maoqide"
-  googleAnalytics = "Your Google Analytics tracking ID"
-  disqus = "maoqide" # maoqide.disqus.com
-  # CSS name for highlight.js
-  highlightjs = "androidstudio"
-  dateFormat = "02 Jan 2006, 15:04"
+  # Prefix URL to edit current page. Will display an "Edit this page" button on top right hand corner of every page. 
+  # Useful to give opportunity to people to create merge request for your doc.
+  # See the config.toml file from this documentation site to have an example.
+  editURL = ""
+  # Author of the site, will be used in meta information
+  author = "maoqide"
+  # Description of the site, will be used in meta information
+  description = "for learning"
+  # Shows a checkmark for visited pages on the menu
+  showVisitedLinks = true
+  # Disable search function. It will hide search bar
+  disableSearch = false
+  # Javascript and CSS cache are automatically busted when new version of site is generated. 
+  # Set this to true to disable this behavior (some proxies don't handle well this optimization)
+  disableAssetsBusting = false
+  # Set this to true to disable copy-to-clipboard button for inline code.
+  disableInlineCopyToClipBoard = true
+  # A title for shortcuts in menu is set by default. Set this to true to disable it. 
+  disableShortcutsTitle = true
+  # When using mulitlingual website, disable the switch language button.
+  disableLanguageSwitchingButton = true
+  # Hide breadcrumbs in the header and only show the current page title
+  disableBreadcrumb = true
+  # Hide Next and Previous page buttons normally displayed full height beside content
+  disableNextPrev = true
+  # Order sections in menu by "weight" or "title". Default to "weight"
+  ordersectionsby = "weight"
+  # Change default color scheme with a variant one. Can be "red", "blue", "green".
+  themeVariant = ""
 
-[menu]
-  # Shown in the side menu.
-  [[menu.main]]
-    name = "Home"
-    pre = "<i class='fa fa-home fa-fw'></i>"
-    weight = 1
-    identifier = "home"
-    url = "/"
-  [[menu.main]]
-    name = "Posts"
-    pre = "<i class='fa fa-list fa-fw'></i>"
-    weight = 2
-    identifier = "post"
-    url = "/post/"
-  [[menu.main]]
-    name = "About"
-    pre = "<i class='fa fa-user fa-fw'></i>"
-    weight = 3
-    identifier = "about"
-    url = "/about/"
-  [[menu.main]]
-    name = "Topics"
-    pre = "<i class='fa fa-user fa-fw'></i>"
-    weight = 3
-    identifier = "topic"
-    url = "/topics/"
-  [[menu.main]]
-    name = "Tags"
-    pre = "<i class='fa fa-user fa-fw'></i>"
-    weight = 3
-    identifier = "tag"
-    url = "/tags/"
-  [[menu.main]]
-    name = "Contact"
-    pre = "<i class='fa fa-phone fa-fw'></i>"
-    weight = 4
-    url = "/contact/"
+[author]
+  name = "maoqide"
+  homepage = "https://github.com/maoqide"
+  
+[outputs]
+  home = [ "HTML", "RSS", "JSON"]
+  
+[[menu.shortcuts]] 
+name = "<i class='fab fa-github'></i> Github"
+identifier = "ds"
+url = "https://github.com/maoqide"
+weight = 10
 
-[social]
-  # Link your social networking accouns to the side menu
-  # by entering your username or ID.
-#  twitter = "*"
-#  facebook = "*"
-#  instagram = "*"
-  github = "maoqide"
-#  stackoverflow = "*"
-#  linkedin = "*"
+#[[menu.shortcuts]]
+#name = "<i class='fas fa-camera'></i> Showcases"
+#url = "/showcase"
+#weight = 11
+
+
+
