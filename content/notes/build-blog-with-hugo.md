@@ -11,7 +11,8 @@ weight = 5
 ## setup
 1. install hugo following [offical install guide](https://gohugo.io/getting-started/installing/).    
 	download packages from [Hugo Release](https://github.com/gohugoio/hugo/releases) and put executale file `hugo` in `PATH`.
-2. execute `hugo new site sitename`, To create a new site. directory structure will like this: 
+
+2. execute `hugo new site sitename`, To create a new site. directory structure will like this:     
 ```
 .
 ├── archetypes
@@ -23,11 +24,13 @@ weight = 5
 ├── static
 └── themes
 ```
-3. download theme from [github](https://github.com/matcornic/hugo-theme-learn/archive/master.zip). unzip the archive and copy files to you site dir, overwriting directory and files of the same name.    
-	you can change your website config by changing `config.toml`.
-4. wirte you first blog. `hugo new content/first.md`, will gen a markdown file in `content`.    
-	you can use `hugo server -w` to start a server locally, and visit [localhost:1313](localhost:1313) for preview.
+
+3. download theme from [github](https://github.com/matcornic/hugo-theme-learn/archive/master.zip). unzip the archive and copy files to you site dir, overwriting directory and files of the same name. you can change your website config by changing `config.toml`.
+
+4. wirte you first blog. `hugo new content/first.md`, will gen a markdown file in `content`. you can use `hugo server -w` to start a server locally, and visit [localhost:1313](localhost:1313) for preview.
+
 5. execute `hugo`, this will gen `md` files in dir `content` to `html` files in dir `public`.
+
 6. put your `public` directory in a [nginx](https://www.nginx.com/resources/wiki/).
 
 ## menu
