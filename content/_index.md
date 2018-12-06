@@ -1,1 +1,5 @@
-# HELLO
+# Maoqide
+
+*learning.*    
+*record.*    
+*collect.*
