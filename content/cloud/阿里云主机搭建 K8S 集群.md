@@ -1,7 +1,7 @@
 ---
 title: "阿里云主机搭建 K8S 集群"
 date: 2018-11-14T14:31:38+08:00
-draft: true
+draft: false
 tags: ["cloud", "k8s"]
 topics: ["k8s"]
 ---
