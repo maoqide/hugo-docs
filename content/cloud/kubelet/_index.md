@@ -8,5 +8,5 @@ description = ""
 Kubelet 源码阅读笔记
 <!--more-->
 
-![](../../images/kubelet.jpg)
+![](./kubelet.jpg)
  
