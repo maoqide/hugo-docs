@@ -28,7 +28,7 @@ draft = true
 顺序栈：数组。动态扩容（动态扩容数组，数据搬移O(n)）
 链式栈：链表。
 
-- [ ] **ArrayStack 实现**
+- [X] **ArrayStack 实现**
 - [ ] **LinkedListStack 实现**  
 
 ## Queue
