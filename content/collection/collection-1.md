@@ -13,5 +13,9 @@ weight = 5
    [bakup_url](https://www.evernote.com/shard/s499/u/0/sh/f27c1cd8-734b-486e-9f7d-7f988b8649eb/7034f2a84388c053628ba819ae0a5ce2)    
 
 3. 一致性哈希算法。    
-[https://segmentfault.com/a/1190000013533592](https://segmentfault.com/a/1190000013533592)    
+   [https://segmentfault.com/a/1190000013533592](https://segmentfault.com/a/1190000013533592)    
    [bakup_url](https://www.evernote.com/shard/s499/u/0/sh/ccdca073-3bb3-4179-ae17-413504c76ca6/64b64e5eefbddccbeb367037e36fa7e1)
+
+4. Kubernetes调度详解。
+   [http://dockone.io/article/2885](http://dockone.io/article/2885)
+   [bakup_url](https://www.evernote.com/shard/s499/u/0/sh/957a3a11-392c-4926-9095-86836c1e5a7e/432392ceb4a9fd2edc29d2fb9979844f)
