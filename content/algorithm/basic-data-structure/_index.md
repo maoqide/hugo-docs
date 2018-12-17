@@ -46,7 +46,7 @@ draft = false
 
 - [ ] **实现**
   
-# Hash Table
+## Hash Table
 散列表 通过散列函数把元素的键值映射为下标，然后将数据存储在数组中对应下标的位置。支持随机访问 O(1)。    
 
 散列函数。
@@ -83,4 +83,5 @@ draft = false
 7. 分布式存储(机器扩容导致重新计算哈希值，一致性哈希算法)
 
 
+---
 [practice-code](https://github.com/maoqide/algorithm-test)
