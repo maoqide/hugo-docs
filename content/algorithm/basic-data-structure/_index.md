@@ -2,7 +2,7 @@
 title = "Basic Data Structure"
 date =  2018-12-07T16:31:03+08:00
 weight = 5
-draft = true
+draft = false
 +++
 
 ## Array
@@ -81,3 +81,6 @@ draft = true
 5. 负载均衡(会话粘滞, 对IP或会话ID哈希)
 6. 数据分片(大文件关键词分片)
 7. 分布式存储(机器扩容导致重新计算哈希值，一致性哈希算法)
+
+
+[practice-code](https://github.com/maoqide/algorithm-test)
