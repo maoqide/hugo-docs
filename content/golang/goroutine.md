@@ -1,5 +1,5 @@
 ---
-title: "Goroutine Management In Golang"
+title: "Goroutine 的管理"
 date: 2018-12-28T16:29:32+08:00
 draft: false
 ---
@@ -9,22 +9,26 @@ goroutine 是 go 的最重要特性之一，可以方便的实现并发编程。
 ## 几点原则
 [go-best-practices-concurrency](https://github.com/codeship/go-best-practices/tree/master/concurrency)    
 在 github上的 [go-best-practices](https://github.com/codeship/go-best-practices) 项目中，提到了几点最佳实践，这里记录下。    
-### 不要和 goroutine 失去联系(Don't loose contact with your goroutines)
+### 不要和 goroutine 失去联系
+> Don't loose contact with your goroutines    
+
 如何避免? 使用`make(chan struct{})`/`sync.WaitGroup`/`context.Context`或`select`。    
 你可能需要这样：    
-1. 当必要的时候可以*中断*创建的 goroutine。
-2. 等待直到产生的所有 goroutine 都完成了。
+1. 当必要的时候可以*中断*创建的 goroutine。    
+2. 等待直到产生的所有 goroutine 都完成了。    
 
-- **中断(Interruption)**    
-可以用以下方式实现：
-1. 共享一个无缓冲的空结构体通道（`make（chan struct {}）`），由 goroutine 的创建者发出关闭信号以关闭。
-2. 一个可取消的`context.Context`。
-3. 确保你的 goroutine 使用`select`来不时检查他们的信号，而不会无限期地阻塞住。
+**中断(Interruption)**    
+可以用以下方式实现：    
+1. 共享一个无缓冲的空结构体通道（`make（chan struct {}）`），由 goroutine 的创建者发出关闭信号以关闭。    
+2. 一个可取消的`context.Context`。    
+3. 确保你的 goroutine 使用`select`来不时检查他们的信号，而不会无限期地阻塞住。    
 
-- **等待 goroutine 完成(Waiting for goroutines to finish)**    
+**等待 goroutine 完成(Waiting for goroutines to finish)**    
 实现的最简单方法是使用`sync.WaitGroup`。在创建 goroutine 之前，请确保调用了`wg.Add(1)`。在运行 goroutine 之后，但在它 return 之前，请确保`wg.Done()`。这种场景下，`defer`是很好的选择。
 
-### 不要用 WaitGroup 来计数多种类型的 goroutine(Don't use wait groups to count more than one type of goroutine)
+### 不要用 WaitGroup 来计数多种类型的 goroutine
+> Don't use wait groups to count more than one type of goroutine    
+
 这里说的 gouroutine 的类型和被作为 gouroutine 调用的函数相关联，此函数可以是另一种类型的成员函数，可以是包中的命名函数，也可以是匿名函数。重要的一点是，你不应该在作为goroutine 调用的不同函数之间共享 WaitGroup。保持简单，如果你需要对一个不同类型的函数使用`go`关键字，创建一个新的 WaitGroup，并对它正确命名。     
 ```golang
 type Parent struct {
@@ -50,11 +54,11 @@ func (p *Parent) Go() {
 ```
 虽然共享一个 WaitGroup 可能是正确的解决方案，但是当下一位工程师接受时，它会增加问题的认知复杂性。    
 
-### 不要让一个 channel 的消费者说什么时候结束(Don't let a channel consumer say when it is done)
-> 对一个已关闭的 channel 发送会导致 panic
-
-
-首先且最重要的是，代码实现是 channel 的消费者和生产者模型，这本身就是一种很好的做法。这是一个明显的关注点分离。    
+### 不要让一个 channel 的消费者说什么时候结束
+> Don't let a channel consumer say when it is done    
+    
+*对一个已关闭的 channel 发送会导致 panic*    
+首先且最重要的是，代码是基于 channel 的消费者和生产者模型的实现，这本身就是一种很好的做法。这是一个明显的关注点分离。    
 golang 给你在编译时定义一个 channel 的方向的能力`recvOnly <-chan Thing := make(chan Thing)`。这在定义变量时很少有用，但是，在定义函数的接收参数时非常有用。比如：
 ```golang
 func consume(things <-chan Thing) {
@@ -65,14 +69,15 @@ func consume(things <-chan Thing) {
 }
 ```
 这强制（在编译时）消费者 goroutine 无法在对 channel 发送数据，包括关闭该 channel 的能力。    
-这强制顶一个租户(goroutine)安全管理 channel。只有当所有生产者停止发送，才关闭 channel。谨记对一个已关闭的 channel 发送会导致 panic。    
+这强制顶一个租户(goroutine)安全管理 channel。只有当所有生产者停止发送，才关闭 channel。谨记对**一个已关闭的 channel 发送会导致 panic**。    
 
-**关闭 channel 的代码必须选保证不会再对此 channel 发送(The piece of code which closes a channel must first guarantee that nothing else will produce on it).**    
+**关闭 channel 的代码必须选保证不会再对此 channel 发送**    
+> The piece of code which closes a channel must first guarantee that nothing else will produce on it    
 
 如果所有对 channel 的发送都在关闭前同步发生，只要你不重试并再次发送，那就是安全的。    
 如果该 channel 上的生产(production)被放弃到其他 goroutine，那么你需要能够与这些 goroutine 同步退出。    
 
-如果我们可以保证对 goroutine 进行计数并等待它们退出，那么我们可以确定关闭 channel 不会在其他地方引起 panic。
+如果我们可以保证对 goroutine 进行计数并等待它们退出，那么我们可以确定关闭 channel 不会在其他地方引起 panic。    
 ```golang
 func doConcurrently() {
   var (
@@ -116,14 +121,14 @@ func doConcurrently() {
 [参考][从外部结束一个 goroutine](https://gulu-dev.com/post/2016-02-02-kill-goroutine#toc_3)    
 
 **可响应 channel 的 goroutine**    
-> 最直接的方法是关闭与这个 goroutine 通信的 channel close(ch)。如果这个 goroutine 此时阻塞在 read 上，那么阻塞会失效，并在第二个返回值中返回 false (此时可以检测并退出)；如果阻塞在 write 上，那么会 panic，这时合理的做法是在 goroutine 的顶层 recover 并退出。
+最直接的方法是关闭与这个 goroutine 通信的 channel close(ch)。如果这个 goroutine 此时阻塞在 read 上，那么阻塞会失效，并在第二个返回值中返回 false (此时可以检测并退出)；如果阻塞在 write 上，那么会 panic，这时合理的做法是在 goroutine 的顶层 recover 并退出。
 更健壮的设计一般会把 data channel (用于传递业务逻辑的数据) 和 signal channel (用于管理 goroutine 的状态) 分开。不会让 goroutine 直接读写 data channel，而是通过 select-default 或 select-timeout 来避免完全阻塞，同时周期性地在 signal channel 检查是否有结束的请求。    
 
 **不可响应的 goroutine**    
-> 1. 尽量使用 Non-blocking IO (正如 go runtime 那样)    
-> 2. 尽量使用阻塞粒度较小的 sys calls (对外部调用也一样)    
-> 3. 业务逻辑总是考虑退出机制，编码时避免潜在的死循环    
-> 4. 在合适的地方插入响应 channel 的代码，保持一定频率的 channel 响应能力    
+1. 尽量使用 Non-blocking IO (正如 go runtime 那样)    
+2. 尽量使用阻塞粒度较小的 sys calls (对外部调用也一样)    
+3. 业务逻辑总是考虑退出机制，编码时避免潜在的死循环    
+4. 在合适的地方插入响应 channel 的代码，保持一定频率的 channel 响应能力    
 
 ## 使用 context
 [GO Context blog](https://blog.golang.org/context)    
@@ -195,13 +200,13 @@ func WithValue(parent Context, key interface{}, val interface{}) Context
 ```  
 
 ### 使用原则
-Programs that use Contexts should follow these rules to keep interfaces consistent across packages and enable static analysis tools to check context propagation:    
-使用Context的程序包需要遵循如下的原则来满足接口的一致性以及便于静态分析。    
-- Do not store Contexts inside a struct type; instead, pass a Context explicitly to each function that needs it. The Context should be the first parameter, typically named ctx;    
-不要把 Context 存在一个结构体当中，显式地传入函数。Context变量需要作为第一个参数使用，一般命名为ctx；    
-- Do not pass a nil Context, even if a function permits it. Pass context.TODO if you are unsure about which Context to use;    
-即使方法允许，也不要传入一个 nil 的 Context，如果你不确定你要用什么 Context 的时候传一个 context.TODO；    
-- Use context Values only for request-scoped data that transits processes and APIs, not for passing optional parameters to functions;     
-使用context的Value相关方法只应该用于在程序和接口中传递的和请求相关的元数据，不要用它来传递一些可选的参数；    
-- The same Context may be passed to functions running in different goroutines; Contexts are safe for simultaneous use by multiple goroutines.     
-同样的Context可以用来传递到不同的goroutine中，Context在多个goroutine中是安全的。
+*Programs that use Contexts should follow these rules to keep interfaces consistent across packages and enable static analysis tools to check context propagation:*    
+	使用Context的程序包需要遵循如下的原则来满足接口的一致性以及便于静态分析:        
+*Do not store Contexts inside a struct type; instead, pass a Context explicitly to each function that needs it. The Context should be the first parameter, typically named ctx*    
+	**不要把 Context 存在一个结构体当中，显式地传入函数。Context变量需要作为第一个参数使用，一般命名为ctx**     
+*Do not pass a nil Context, even if a function permits it. Pass context.TODO if you are unsure about which Context to use*    
+	**即使方法允许，也不要传入一个 nil 的 Context，如果你不确定你要用什么 Context 的时候传一个 context.TODO**    
+*Use context Values only for request-scoped data that transits processes and APIs, not for passing optional parameters to functions*    
+	**使用context的Value相关方法只应该用于在程序和接口中传递的和请求相关的元数据，不要用它来传递一些可选的参数**    
+*The same Context may be passed to functions running in different goroutines; Contexts are safe for simultaneous use by multiple goroutines.*    
+	**同样的Context可以用来传递到不同的goroutine中，Context在多个goroutine中是安全的。**
