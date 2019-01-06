@@ -8,7 +8,11 @@ weight = 5
 之前在 [阿里云主机搭建-k8s-集群](https://maoqide.live:30091/cloud/%E9%98%BF%E9%87%8C%E4%BA%91%E4%B8%BB%E6%9C%BA%E6%90%AD%E5%BB%BA-k8s-%E9%9B%86%E7%BE%A4/) 这篇文章介绍了如何在阿里云环境快速搭建一个 Kubernetes 环境，按照文章的步骤，可以快速搭建一个可用的 Kubernetes 集群。    
 
 ## 网站
-同样在 [Build Blog With Hugo](https://maoqide.live:30091/notes/build-blog-with-hugo/) 这边文章中，介绍了怎么使用 hugo 快速搭建一个自己的个人博客。    
+同样在 [Build Blog With Hugo](https://maoqide.live:30091/notes/build-blog-with-hugo/) 这边文章中，介绍了怎么使用 hugo 快速搭建一个自己的个人博客。   
+
+## 容器化
+我的项目 [hugo-dcos](https://github.com/maoqide/hugo-docs) 包含了容器化一个 hugo 网站项目所需的一些脚本和 Dockerfile, 可以参考本项目自行容器化自己的项目。    
+项目使用了[webhook](https://github.com/adnanh/webhook)接收 github 的通知，并在github上配置项目[maoqide.github.io](https://github.com/maoqide/maoqide.github.io)的 Webhooks, 当本项目有更新时，会调用 webhook 服务触发操作，拉取最新的代码。    
 
 ## 部署
 本文介绍如何将自己的个人博客通过 Kubernetes 发布到公网，让大家可以访问。     
@@ -37,9 +41,20 @@ spec:
     spec:
       containers:
       - name: mysite
-        image: maoqide/site
+        image: maoqide/site:v1.1
+        env:
+        - name: GITHUB_HOOK_SECRET
+          value: MY_SECRET
         ports:
         - containerPort: 80
+        - containerPort: 9000
+        livenessProbe:
+          httpGet:
+          # scheme: HTTPS
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+          timeoutSeconds: 1
 
 ---
 kind: Service
@@ -50,9 +65,15 @@ spec:
   selector:
     app: site
   ports:
-  - protocol: TCP
+  - name: nginx
+    protocol: TCP
     port: 80
     targetPort: 80
+  - name: webhook
+    protocol: TCP
+    port: 9000
+    targetPort: 9000
+
 
 ```
 
@@ -345,14 +366,20 @@ metadata:
   name: site-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
   - http:
       paths:
+      - path: /_hook
+        backend:
+          serviceName: mysite
+          servicePort: 9000
       - path: /
         backend:
           serviceName: mysite
           servicePort: 80
+
 ```
 
 ### 配置域名

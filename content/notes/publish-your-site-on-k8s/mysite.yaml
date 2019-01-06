@@ -14,9 +14,20 @@ spec:
     spec:
       containers:
       - name: mysite
-        image: maoqide/site
+        image: maoqide/site:v1.1
+        env:
+        - name: GITHUB_HOOK_SECRET
+          value: MY_SECRET
         ports:
         - containerPort: 80
+        - containerPort: 9000
+        livenessProbe:
+          httpGet:
+          # scheme: HTTPS
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+          timeoutSeconds: 1
 
 ---
 kind: Service
@@ -27,6 +38,11 @@ spec:
   selector:
     app: site
   ports:
-  - protocol: TCP
+  - name: nginx
+    protocol: TCP
     port: 80
     targetPort: 80
+  - name: webhook
+    protocol: TCP
+    port: 9000
+    targetPort: 9000
