@@ -11,7 +11,7 @@ RUN apt-get update -y && \
 WORKDIR /usr/share/nginx/html
 ENV REPO_URL https://github.com/maoqide/maoqide.github.io.git
 RUN touch /var/log/mysite.log && \
-	echo '0 2 * * * (date && /usr/local/bin/update) > /var/log/mysite.log  2>&1' >>  /var/spool/cron/crontabs/root && \
+	echo '0 2 * * * (date && /usr/local/bin/update) >> /var/log/mysite.log  2>&1' >>  /var/spool/cron/crontabs/root && \
 	crontab /var/spool/cron/crontabs/root && \
 	git clone $REPO_URL /usr/share/nginx/html
 ADD ./webhook /usr/local/bin/
