@@ -118,11 +118,12 @@ cpuacct.stat       			#输出系统（system/kernel mode）耗时和用户（use
 读写：写时复制    
 删除：whiteout 屏蔽    
 
-Docker 镜像的各层的全部内容都存储在`var/lib/docker/aufs/diff/<image-id>`文件夹下，每个文件夹下包含了该镜像层的全部文件和目录，文件以各层的 UUID 命名。     
+Docker 镜像的各层的全部内容都存储在`/var/lib/docker/aufs/diff/<image-id>`文件夹下，每个文件夹下包含了该镜像层的全部文件和目录，文件以各层的 UUID 命名。     
 正在运行的容器的**文件系统**被挂载在`/var/lib/docker/aufs/mnt/<container-id>`文件夹下，这就是 AUFS 的联合挂载点，在这里的文件夹下，你可以看到容器文件系统的所有文件。如果容器没有在运行，它的挂载目录仍然存在，不过是个空文件夹。    
 容器的**元数据**和**各种配置文件**被放在`/var/lib/docker/containers/<container-id>`文件夹下，无论容器是运行还是停止都会有一个文件夹。如果容器正在运行，其对应的文件夹下会有一个 log 文件。     
 容器的**只读层**存储在`/var/lib/docker/aufs/diff/<container-id>`目录下，对容器的所有修改都会保存在这个文件夹下，即便容器停止，这个文件夹也不会删除。也就是说，容器重启后并不会丢失原先的更改。     
 容器中**镜像层**的信息存储在`/var/lib/docker/aufs/layers/<container-id>`文件中。文件中从上至下依次记录了容器使用的各镜像层。    
+![](./aufs_layers.jpg)    
 
 #### 性能表现
 - 在容器密度比较告的场景下，AUFS 是非常好的选择，因为AUFS的容器间共享镜像层的特性使其磁盘利用率很高，容器的启动时间很短    
@@ -145,7 +146,7 @@ OverlayFS与AUFS相似，也是一种联合文件系统(union filesystem)，与A
 - 可能更快    
 
 OverlayFS 将一个 Linux 主机中的两个目录组合起来，一个在上，一个在下，对外提供统一的视图。这两个目录就是层`layer`，将两个层组合在一起的技术被成为联合挂载`union mount`。在OverlayFS中，上层的目录被称作`upperdir`，下层的目录被称作`lowerdir`，对外提供的统一视图被称作`merged`。     
-[](./overlay_constructs.jpg)    
+![](./overlay_constructs.jpg)    
 OverlayFS 仅有两层，也就是说镜像中的每一层并不对应 OverlayFS 中的层，而是镜像中的每一层对应`/var/lib/docker/overlay`中的一个文件夹，文件夹以该层的 UUID 命名。然后使用硬连接将下面层的文件引用到上层。这在一定程度上节省了磁盘空间。这样 OverlayFS中 的`lowerdir`就对应镜像层的最上层，并且是只读的。在创建镜像时，Docker 会新建一个文件夹作为OverlayFS的`upperdir`，它是可写的。    
 
 读写：第一次修改时，文件不在container layer(upperdir)中，overlay driver 调用`copy-up`操作将文件从`lowerdir`读到`upperdir`中，然后对文件的副本做出修改。     
@@ -155,6 +156,6 @@ overlay的`copy-up`操作工作在文件层面, 对文件的修改需要将整�
 删除：whiteout 覆盖
 
 ## 参考
-(https://yq.aliyun.com/articles/54483)[https://yq.aliyun.com/articles/54483]
-(https://segmentfault.com/a/1190000008323952)[https://segmentfault.com/a/1190000008323952]
-(https://blog.csdn.net/vchy_zhao/article/details/70238690)[https://blog.csdn.net/vchy_zhao/article/details/70238690]
+[https://yq.aliyun.com/articles/54483](https://yq.aliyun.com/articles/54483)    
+[https://segmentfault.com/a/1190000008323952](https://segmentfault.com/a/1190000008323952)    
+[https://blog.csdn.net/vchy_zhao/article/details/70238690](https://blog.csdn.net/vchy_zhao/article/details/70238690)    
