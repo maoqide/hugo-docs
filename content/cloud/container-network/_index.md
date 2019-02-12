@@ -5,6 +5,8 @@ weight = 5
 tag = ["container-network", "kubernetes", "k8s", "docker", "flannel", "cni"]
 +++
 
+*参考及极客时间 https://time.geekbang.org/column/article/65287*    
+
 ## 同主机
 **Veth Pair**
 
@@ -61,13 +63,16 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.1.16.0       10.1.16.0       255.255.255.0   UG    0      0        0 flannel.1
 ```
 
-为了数据包能从 node1 的 flannel.1 设备发送到 node2 的flannel.1 设备上，还是需要借助宿主机网络从 node1 的 eth0 网卡发出到 node2 的 eth0 网卡。如何知道目的 VTEP 设备的宿主机地址呢? 此时 flannel.1 设备充当网桥的角色，在二层网络进行 UDP 包的转发。并由 flanneld 负责维护 falnnel.1 对应的 FDB 信息，通过 FDB 记录查询网桥转发的规则，这样就找到了 UDP 包要被发往的宿主机地址，接下来就可以通过正常的发包流程将数据发出去了。
+为了数据包能从 node1 的 flannel.1 设备发送到 node2 的flannel.1 设备上，还是需要借助宿主机网络从 node1 的 eth0 网卡发出到 node2 的 eth0 网卡。如何知道目的 VTEP 设备的宿主机地址呢? 此时 flannel.1 设备充当网桥的角色，在二层网络进行 UDP 包的转发。并由 flanneld 负责维护 falnnel.1 对应的 FDB 信息，通过 FDB 记录查询网桥转发的规则，这样就找到了 UDP 包要被发往的宿主机地址，接下来就可以通过正常的发包流程将数据发出去了。    
 ```shell
 # 在 Node 1 上，使用“目的 VTEP 设备”的 MAC 地址进行查询
 $ bridge fdb show flannel.1 | grep 5e:f8:4f:00:e3:37
 5e:f8:4f:00:e3:37 dev flannel.1 dst 10.168.0.3 self permanent
-
 ```
 
+#### host-gw
+host-gw 模式下，flanneld 在每台宿主机上创建路由规则，将每个 flannel 子网的下一跳，设置成该子网对应的宿主机的 IP 地址。也就是说，这台宿主机会充当这条容器通信路径中的*网关*。Flannel 子网和主机的信息，都保存在 ETCD 中，由 flanneld 监听 ETCD 中的数据变化，并实时更新路由表。    
+![图片来自极客时间 https://time.geekbang.org/column/article/65287#previewimg](container-network-flannel-host-gateway.png)    
 
-
+ host-gw 模式要求宿主机直接二层连通。    
+ 
