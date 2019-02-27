@@ -8,7 +8,7 @@ k8s controller-manager 源码阅读笔记
 <!--more-->
 
 ## 代码结构
-		本部分用于记录 kube-controller-manager 代码整体结构及关键方法，便于到源码中查找，个人阅读记录，读者可跳过。本文所有代码均基于 kubernetes release-1.13。        
+	本部分用于记录 kube-controller-manager 代码整体结构及关键方法，便于到源码中查找，个人阅读记录，读者可跳过。本文所有代码均基于 kubernetes release-1.13。        
 ```golang
 // cmd/kube-controller-manager/controller-manager.go
 	main()
