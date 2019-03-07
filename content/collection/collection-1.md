@@ -17,3 +17,6 @@ weight = 5
 3. Istio 调用链埋点/tracing: 使用 istio 做调用链跟踪依旧需要修改一定业务代码，微服务间请求时需要配合在请求头上传递 sidecar 生成的 Trace 相关信息，才能将调用关联到同一个 trace 上，否则每次请求都会形成新的割裂的 Trace 信息。    
    [https://www.infoq.cn/article/pqy*PFPhox9OQQ9iCRTt](https://www.infoq.cn/article/pqy*PFPhox9OQQ9iCRTt)    
    [备用链接](https://www.evernote.com/shard/s499/u/0/sh/7c3489c5-b2ad-4e6d-8f6f-0013c8a5b06f/19b490c8227798d709c766c174ed686c)
+
+4. kubernetes informer 解析。    
+   [https://blog.csdn.net/weixin_42663840/article/details/81699303](https://blog.csdn.net/weixin_42663840/article/details/81699303)    
