@@ -29,7 +29,7 @@ NewSchedulerCommand()
 										// podPassesBasicChecks makes sanity checks on the pod if it can be scheduled.
 										// 检查 pod 是否使用 pvc，且 pvc 是否可用
 										podPassesBasicChecks(pod, g.pvcLister)
-										// Computing predicates, 并发筛选符合 predicates 的节点，当筛选出的节点数量满足配置的数量(16)即停止筛选
+										// Computing predicates, 并发筛选符合 predicates 的节点
 										filteredNodes, failedPredicateMap, err := g.findNodesThatFit(pod, nodes)
 											// Filters the nodes to find the ones that fit based on the given predicate functions
 											// Each node is passed through the predicate functions to determine if it is a fit
