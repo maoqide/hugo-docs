@@ -253,4 +253,5 @@ type ControllerContext struct {
 ## controllers
 上面就是 controller-manager 的整体启动流程和代码结构。接下来会具体分析几个核心的 controller。    
 
-### replicationcontroller
+### replicasetcontroller
+kubernetes\pkg\controller\replicaset\replica_set.go
