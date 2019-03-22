@@ -5,6 +5,7 @@ weight = 5
 draft = true
 +++
 
+    An Operator is an application-specific controller that extends the Kubernetes API to create, configure, and manage instances of complex stateful applications on behalf of a Kubernetes user.     
 Operator 是一个特定的应用程序的控制器，通过扩展 Kubernetes API 以代表 Kubernetes 用户创建，配置和管理复杂有状态应用程序的实例。    
 Operator 是一种软件，它结合了特定的领域知识并通过 CRD(Custom Resource Definition ) 机制扩展了Kubernetes API，使用户像管理 Kubernetes 的内置资源一样创建，配置和管理应用程序。Operator 管理整个集群中的多个实例，而不仅仅管理应用程序的单个实例。    
 
@@ -13,7 +14,7 @@ Operator 是一种软件，它结合了特定的领域知识并通过 CRD(Custom
 
 ## The sample-controller
 
-创建我们示例的 operator 程序需要用到的第一个工具是 [sample-controller](https://github.com/kubernetes/sample-controller), 可以在 https://github.com/kubernetes/sample-controller 找到。    
+创建示例的 operator 程序需要用到的第一个工具是 [sample-controller](https://github.com/kubernetes/sample-controller), 可以在 https://github.com/kubernetes/sample-controller 找到。    
 
 这个项目实现了一个简单的 `Foo` 类型的 operator, 当创建一个自定义类型的对象 `foo`，operator 会创建一个 以几个公开的 docker 镜像和特定的副本数创建一个 `Deployment`。    
 要安装和编译它，需要确认你的 `GOPATH`，然后执行:    
@@ -40,7 +41,7 @@ example-foo-6cbc69bf5d-j8lhx   0/1    Terminating   0          38s
 
 	在 Kubernetes 1.11.0，controller 会进入无限循环，当 foo 对象创建一个 deployment 后更新它的状态：在`updateFooStatus`方法中，你必调用`UpdateStatus(fooCopy)`代替`Update(fooCopy)`。    
 
-到目前为止，控制器完成了这项工作：它在我们创建`foo`对象时创建一个`deployment`并在我们删除对象时停止`deployment`。    
+到目前为止，控制器完成了这样一项工作：它在我们创建`foo`对象时创建一个`deployment`并在我们删除对象时停止`deployment`。    
 
 现在我们可以进一步调整 CRD 和 controller 以使用我们自己的自定义资源定义。    
 
@@ -97,7 +98,7 @@ pkg/apis/genericdaemon/
     ├── register.go
     └── types.go
 ```
-并调整其内容（更改的部分以粗体显示）：    
+并调整其内容：    
 ```golang
 ////////////////
 // register.go
@@ -213,7 +214,7 @@ Generating informers for genericdaemon:v1beta1 at k8s.io/sample-controller/pkg/c
 ## Deploying the operator to the Kubernetes cluster
 当我们将`sample-controller`修改为我们需要的之后，我们要将它部署到kubernetes集群。事实上，在这个时候，我们已经使用我们的凭证将它运行在我们的开发系统来测试它。    
 
-这是一个简单的Dockerfile，用于构建 operator 的Docker镜像（你必须删除原有的`sample-controller`中的所有代码才能构建）：    
+这是一个简单的 Dockerfile，用于构建 operator 的 Docker 镜像（你必须删除原有的`sample-controller`中的所有代码才能构建）：    
 ```Dockerfile
 FROM golang
 RUN mkdir -p /go/src/k8s.io/sample-controller
