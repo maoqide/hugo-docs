@@ -2,7 +2,7 @@
 title = "Sample Controller"
 date =  2019-03-18T12:53:41+08:00
 weight = 5
-draft = true
+draft = false
 +++
 
 自己构建 sample-controller    
