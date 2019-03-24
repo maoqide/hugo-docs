@@ -2,7 +2,7 @@
 title = "Building an Operator for Kubernetes With the Sample Controller"
 date =  2019-03-16T21:34:46+08:00
 weight = 5
-draft = true
+draft = false
 +++
 
     An Operator is an application-specific controller that extends the Kubernetes API to create, configure, and manage instances of complex stateful applications on behalf of a Kubernetes user.     
