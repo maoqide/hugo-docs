@@ -15,3 +15,11 @@ weight = 5
 3. 一致性哈希算法。    
    [https://segmentfault.com/a/1190000013533592](https://segmentfault.com/a/1190000013533592)    
    [备用链接](https://www.evernote.com/shard/s499/u/0/sh/ccdca073-3bb3-4179-ae17-413504c76ca6/64b64e5eefbddccbeb367037e36fa7e1)
+
+4. ETCD的一些使用场景及原理分析。
+   [https://infoq.cn/article/etcd-interpretation-application-scenario-implement-principle](https://infoq.cn/article/etcd-interpretation-application-scenario-implement-principle)
+   [备用链接](https://www.evernote.com/shard/s499/u/0/sh/dd40c748-bd9b-4686-85ae-245ef7ca1af3/d1006d54426e5bdfe4a89d0813919cfa)
+
+5. ETCD Raft 算法解析。
+   [https://draveness.me/etcd-introduction](https://draveness.me/etcd-introduction)    
+   [备用链接](https://www.evernote.com/shard/s499/u/0/sh/b1031e8c-a03d-4ebb-872c-ac935828a5a0/e6403a5d495d57397b6ced5b7c4eb517)
