@@ -69,6 +69,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 $ bridge fdb show flannel.1 | grep 5e:f8:4f:00:e3:37
 5e:f8:4f:00:e3:37 dev flannel.1 dst 10.168.0.3 self permanent
 ```
+![](flannel-vxlan.jpg)    
 
 #### host-gw
 host-gw 模式下，flanneld 在每台宿主机上创建路由规则，将每个 flannel 子网的下一跳，设置成该子网对应的宿主机的 IP 地址。也就是说，这台宿主机会充当这条容器通信路径中的*网关*。Flannel 子网和主机的信息，都保存在 ETCD 中，由 flanneld 监听 ETCD 中的数据变化，并实时更新路由表。    
